@@ -37,3 +37,8 @@ e.g "*KU, Leuven, Leuven, Belgium*" from https://openalex.org/W3085273257 has no
  -  **`mismatch_country_code.csv`**: cases where OpenAlex **MAY** not provide an accurate country_code (at least our affiliation-matching tool find a different country_code). Again these detections were done automatically and **does** contain errors for sure, it is **NOT** a golden dataset, but again, we believe that the vast majority of the cases raised here are of interest.
 
 e.g "*ANDRA, Ci2A, Soulaines-Dhuys, France*" from https://openalex.org/W2802150657 is matched by OpenAlex to "Australian National Drag Racing Association", country_code AU whereas it should be matched to country 'FR'.
+
+
+# mailing list
+
+https://groups.google.com/g/openalex-users/c/QKMM1rxjk9Y
