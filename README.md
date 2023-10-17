@@ -13,8 +13,6 @@ We believe that many use cases using country affiliation can be developed from O
 A country, as well as international organisations, also want to be able to compare production from one country to another.
 Or understanding the international mobility of researchers is also a matter of interest.
 
-This repo lists a sample of cases where the country of affiliation present in OpenAlex appears potentially incorrect. We have used our own [affiliation-matching tool](https://github.com/dataesr/affiliation-matcher) to detect these cases, and this automatic tool itself is not perfect. Nevertheless, we believe that the vast majority of the cases raised here are of interest.
-
  **October 2023 feedback**
 
 In **`mismatch_country_asof_20231017.jsonl`**, we list some `raw_affiliation_string` that we detected to provoke country mismatch (and then of course RoR mismatch). There are few (around 50 + variants) but they affect many publications. We provide also some 'contaminated' DOIs, all published in 2021.
@@ -32,8 +30,13 @@ A few examples:
 
 Some of the mismatches we detected seem explainable (like the bug for ORCiD), but others seem very weird, like the Dnipro State Medical University matched with a Valeo RoR ?
 
+
+
+
+
  **First feedback (now deprecated)**
 
+This repo lists a sample of cases where the country of affiliation present in OpenAlex appears potentially incorrect. We have used our own [affiliation-matching tool](https://github.com/dataesr/affiliation-matcher) to detect these cases, and this automatic tool itself is not perfect. Nevertheless, we believe that the vast majority of the cases raised here are of interest.
 We present this data with the following fields
 
 - **raw_affiliation_string**: raw affiliation string as present in OpenAlex
