@@ -15,7 +15,7 @@ Or understanding the international mobility of researchers is also a matter of i
 
  **October 2023 feedback**
 
-In **`mismatch_country_asof_20231017.jsonl`**, we list some `raw_affiliation_string` that we detected to provoke country mismatch (and then of course RoR mismatch). There are few (around 50 + variants) but they affect many publications. We provide also some 'contaminated' DOIs, all published in 2021.
+In **`mismatch_country_asof_20231017.jsonl`**, we list some `raw_affiliation_string` that we detected to provoke country mismatch (and then of course RoR mismatch). There are few (around 50 + variants) but they affect many publications. We provide also some 'contaminated' DOIs, all published since 2013.
 A few examples:
 
 - all affiliations that contain a researcher ORCiD are linked to the US (assuming an affiliation to ORCID) ex: https://api.openalex.org/works?filter=doi:10.21203/rs.3.rs-480042/v1
