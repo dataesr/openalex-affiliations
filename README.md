@@ -1,17 +1,11 @@
 # openalex-affiliation-country
 
-***Exhibits cases where OpenAlex affiliation country detection could be improved***
+***Exhibits cases where OpenAlex affiliation detection could be improved***
 
 In OpenAlex, an alignment pipeline is implemented to link raw harvested affiliations (particularly via web crawling I suppose) to standardised affiliations, described by a standard `display_name` and potentially an `id`, `ror` and `country_code`.
 
-Therefore, it seems that the detection of affiliation countries is only done through the affiliation institutions, based on the raw_affiliation_string.
-raw_affiliation_string ----> institutions ----> country
+Each issue listed in this repo corresponds to ONE raw affiliation string whose RoR matches is inaccurate or missing.
 
-Nevertheless, the task of recognizing an institution in a raw affiliation string is probably more complex than the task of recognizing a country in a raw affiliation string.
-
-We believe that many use cases using country affiliation can be developed from OpenAlex, but today the quality of this metadata still needs to be improved for the implementation of these use cases with OpenAlex to be fully relevant. For example, every country seeking to steer its public research policies needs to use a reliable basis for listing and analysing its scientific output.
-A country, as well as international organisations, also want to be able to compare production from one country to another.
-Or understanding the international mobility of researchers is also a matter of interest.
 
  **October 2023 feedback**
 
