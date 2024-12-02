@@ -23,8 +23,6 @@ try:
 except KeyError:
     print("Some config is not defined !")
 
-print(GIT_TOKEN)
-
 # Functions
 def collect_issues():
     all_issues = []

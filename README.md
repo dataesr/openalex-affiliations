@@ -1,4 +1,8 @@
-# openalex-affiliation-country
+# openalex-affiliations
+
+An open dataset of all the issues of this repository is available here :
+https://data.enseignementsup-recherche.gouv.fr/explore/dataset/openalex-affiliations-corrections/information/. This dataset is updated every day at 2 AM.
+
 
 ***Exhibits cases where OpenAlex affiliation detection could be improved***
 
