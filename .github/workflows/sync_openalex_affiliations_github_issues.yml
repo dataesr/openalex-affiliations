@@ -1,8 +1,9 @@
-name: run main.py
+name: run sync_openalex_affiliations_github_issues.py
 
 on:
   schedule:
     - cron: "0 2 * * *" # Every day at 2 AM
+  workflow_dispatch:
 
 jobs:
   build:
@@ -21,7 +22,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           
-      - name: execute py script # run main.py
+      - name: execute python script # run sync_openalex_affiliations_github_issues.py
         env:
           SOME_SECRET: ${{ secrets.SOME_SECRET }}
         run: python sync_openalex_affiliations_github_issues.py
