@@ -13,19 +13,23 @@ load_dotenv()
 # Config
 GIT_PER_PAGE = 100
 GIT_REPOSITORY_NAME = "dataesr/openalex-affiliations"
-GIT_TOKEN = os.getenv("GIT_TOKEN")
-GIT_USERNAME = os.getenv("GIT_USERNAME")
-ODS_API_KEY = os.getenv("ODS_API_KEY")
 ODS_DATASET = "https://data.enseignementsup-recherche.gouv.fr/api/automation/v1.0/datasets/da_lyihp9"
 OUTPUT_FILE_NAME = "github_issues.csv"
+
+try:
+    GIT_TOKEN = os.environ["GIT_TOKEN"]
+    GIT_USERNAME = os.environ["GIT_USERNAME"]
+    ODS_API_KEY = os.environ["ODS_API_KEY"]
+except KeyError:
+    print("Some config is not defined !")
+
+print(GIT_TOKEN)
 
 # Functions
 def collect_issues():
     all_issues = []
     for p in range(1, 10000):
         print(p)
-        # Wait for 1 second between 2 API calls
-        time.sleep(1)
         issues_url = f"https://api.github.com/repos/{GIT_REPOSITORY_NAME}/issues?per_page={GIT_PER_PAGE}&page={p}&state=all"
         gh_session = requests.Session()
         gh_session.auth = (GIT_USERNAME, GIT_TOKEN)
