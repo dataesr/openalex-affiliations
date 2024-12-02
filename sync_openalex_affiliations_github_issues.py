@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Execution example: python3 collect_github_issues.py
+# Execution example: python3 sync_openalex_affiliations_github_issues.py
 
 # Imports
 from dotenv import load_dotenv
@@ -79,8 +79,10 @@ def ods_sync():
     url = f"{ODS_DATASET}/resources/files/"
     headers = { "Authorization": f"apikey {ODS_API_KEY}" }
     files = { "file": open(OUTPUT_FILE_NAME, "rb")}
-    requests.post(url, files=files, headers=headers)
-    requests.post(f"{ODS_DATASET}/publish/", headers=headers)
+    response1 = requests.post(url, files=files, headers=headers)
+    print(response1.status_code)
+    response2 = requests.post(f"{ODS_DATASET}/publish/", headers=headers)
+    print(response2.status_code)
 
 def main():
     data = []

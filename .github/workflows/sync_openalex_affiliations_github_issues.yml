@@ -24,7 +24,7 @@ jobs:
           
       - name: execute python script # run sync_openalex_affiliations_github_issues.py
         env:
-          SOME_SECRET: ${{ secrets.SOME_SECRET }}
+          ODS_API_KEY: ${{ secrets.ODS_API_KEY }}
         run: python sync_openalex_affiliations_github_issues.py
           
       # - name: commit files
