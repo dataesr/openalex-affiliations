@@ -11,10 +11,10 @@ import time
 load_dotenv()
 
 # Config
-GITHUB_PER_PAGE = 100
-GITHUB_REPOSITORY_NAME = "dataesr/openalex-affiliations"
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
-GITHUB_USERNAME = os.getenv("GITHUB_USERNAME")
+GIT_PER_PAGE = 100
+GIT_REPOSITORY_NAME = "dataesr/openalex-affiliations"
+GIT_TOKEN = os.getenv("GIT_TOKEN")
+GIT_USERNAME = os.getenv("GIT_USERNAME")
 ODS_API_KEY = os.getenv("ODS_API_KEY")
 ODS_DATASET = "https://data.enseignementsup-recherche.gouv.fr/api/automation/v1.0/datasets/da_lyihp9"
 OUTPUT_FILE_NAME = "github_issues.csv"
@@ -26,11 +26,11 @@ def collect_issues():
         print(p)
         # Wait for 1 second between 2 API calls
         time.sleep(1)
-        issues_url = f"https://api.github.com/repos/{GITHUB_REPOSITORY_NAME}/issues?per_page={GITHUB_PER_PAGE}&page={p}&state=all"
+        issues_url = f"https://api.github.com/repos/{GIT_REPOSITORY_NAME}/issues?per_page={GIT_PER_PAGE}&page={p}&state=all"
         gh_session = requests.Session()
-        gh_session.auth = (GITHUB_USERNAME, GITHUB_TOKEN)
+        gh_session.auth = (GIT_USERNAME, GIT_TOKEN)
         issues = gh_session.get(issues_url).json()
-        if len(issues) < GITHUB_PER_PAGE:
+        if len(issues) < GIT_PER_PAGE:
             break
         all_issues += issues
     return all_issues
@@ -38,7 +38,7 @@ def collect_issues():
 def parse_issue(issue):
     new_elt = {}
     new_elt["github_issue_id"] = issue["number"]
-    new_elt["github_issue_link"] = f"https://github.com/dataesr/openalex-affiliations/issues/{issue['number']}"
+    new_elt["github_issue_link"] = f"https://github.com/{GIT_REPOSITORY_NAME}/issues/{issue['number']}"
     new_elt["state"] = issue["state"]
     new_elt["date_opened"] = issue["created_at"][0:10]
     new_elt["date_closed"] = None if issue["closed_at"] is None else issue["closed_at"][0:10]

@@ -24,18 +24,8 @@ jobs:
           
       - name: execute python script # run sync_openalex_affiliations_github_issues.py
         env:
+          GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+          GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
           ODS_API_KEY: ${{ secrets.ODS_API_KEY }}
         run: python sync_openalex_affiliations_github_issues.py
-          
-      # - name: commit files
-      #   run: |
-      #     git config --local user.email "action@github.com"
-      #     git config --local user.name "GitHub Action"
-      #     git add -A
-      #     git diff-index --quiet HEAD || (git commit -a -m "updated logs" --allow-empty)
-          
-      # - name: push changes
-      #   uses: ad-m/github-push-action@v0.6.0
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     branch: main 
+ 
