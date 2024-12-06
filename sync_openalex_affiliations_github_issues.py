@@ -27,14 +27,14 @@ except KeyError:
 def collect_issues():
     all_issues = []
     for p in range(1, 10000):
-        print(p)
         issues_url = f"https://api.github.com/repos/{GIT_REPOSITORY_NAME}/issues?per_page={GIT_PER_PAGE}&page={p}&state=all"
         gh_session = requests.Session()
         gh_session.auth = (GIT_USERNAME, GIT_TOKEN)
         issues = gh_session.get(issues_url).json()
+        all_issues += issues
         if len(issues) < GIT_PER_PAGE:
             break
-        all_issues += issues
+    print(len(all_issues))
     return all_issues
 
 def parse_issue(issue):
