@@ -34,7 +34,6 @@ def collect_issues():
         all_issues += issues
         if len(issues) < GIT_PER_PAGE:
             break
-    print(len(all_issues))
     return all_issues
 
 def parse_issue(issue):
@@ -59,9 +58,9 @@ def parse_issue(issue):
     d_end = issue["body"].find(e)
     e_start = d_end + len(e)
     e_end = len(issue["body"])-1
-    new_elt["raw_affiliation_name"] = issue["body"][a_start:a_end]
-    new_rors = [r for r in issue["body"][b_start:b_end].split(";") if r]
-    previous_rors = [r for r in issue["body"][c_start:c_end].split(";") if r]
+    new_elt["raw_affiliation_name"] = issue["body"][a_start:a_end].replace("\r", "")
+    new_rors = [r.replace("\r", "") for r in issue["body"][b_start:b_end].split(";") if r]
+    previous_rors = [r.replace("\r", "") for r in issue["body"][c_start:c_end].split(";") if r]
     added_rors = list(set(new_rors) - set(previous_rors))
     removed_rors = list(set(previous_rors) - set(new_rors))
     new_elt["has_added_rors"] = 1 if len(added_rors) > 0 else 0
@@ -70,11 +69,11 @@ def parse_issue(issue):
     new_elt["previous_rors"] = ";".join(previous_rors)
     new_elt["added_rors"] = ";".join(added_rors)
     new_elt["removed_rors"] = ";".join(removed_rors)
-    new_elt["openalex_works_examples"] = ";".join([f"https://api.openalex.org/works/{work}" for work in issue["body"][d_start:d_end].split(";")])
+    new_elt["openalex_works_examples"] = ";".join([f"https://api.openalex.org/works/{work}" for work in issue["body"][d_start:d_end].replace("\r", "").split(";")])
     if e_start > d_start:
-        new_elt["contact"] = issue["body"][e_start:e_end]
+        new_elt["contact"] = issue["body"][e_start:e_end].replace("\r", "")
         if "@" in new_elt["contact"]:
-            new_elt["contact_domain"] = new_elt["contact"].split("@")[1].strip()
+            new_elt["contact_domain"] = new_elt["contact"].split("@")[1].strip().replace("\r", "")
     return new_elt
 
 def ods_sync():
