@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 import os
 import pandas as pd
 import requests
-import time
 
 load_dotenv()
 
@@ -14,6 +13,7 @@ load_dotenv()
 GIT_PER_PAGE = 100
 GIT_REPOSITORY_NAME = "dataesr/openalex-affiliations"
 ODS_DATASET = "https://data.enseignementsup-recherche.gouv.fr/api/automation/v1.0/datasets/da_lyihp9"
+ODS_FILE_ID = "re_agmowf"
 OUTPUT_FILE_NAME = "github_issues.csv"
 
 try:
@@ -80,10 +80,14 @@ def ods_sync():
     url = f"{ODS_DATASET}/resources/files/"
     headers = { "Authorization": f"apikey {ODS_API_KEY}" }
     files = { "file": open(OUTPUT_FILE_NAME, "rb")}
-    response1 = requests.post(url, files=files, headers=headers)
-    print(response1.status_code)
-    response2 = requests.post(f"{ODS_DATASET}/publish/", headers=headers)
-    print(response2.status_code)
+    response = requests.post(url, files=files, headers=headers)
+    json = {
+        "datasource": { "type": "uploaded_file", "file": { "uid": response.json().get('uid') } },
+        "title": OUTPUT_FILE_NAME,
+        "type": "csvfile",
+    }
+    requests.put(f"{ODS_DATASET}/resources/{ODS_FILE_ID}/", headers=headers, json=json)
+    requests.post(f"{ODS_DATASET}/publish/", headers=headers)
 
 def main():
     data = []
