@@ -26,7 +26,7 @@ except KeyError:
 # Functions
 def collect_issues():
     all_issues = []
-    for p in range(1, 10000):
+    for p in range(1, 50000):
         issues_url = f"https://api.github.com/repos/{GIT_REPOSITORY_NAME}/issues?per_page={GIT_PER_PAGE}&page={p}&state=all"
         gh_session = requests.Session()
         gh_session.auth = (GIT_USERNAME, GIT_TOKEN)
