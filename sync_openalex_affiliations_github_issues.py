@@ -82,7 +82,7 @@ def ods_sync():
     files = { "file": open(OUTPUT_FILE_NAME, "rb")}
     response = requests.post(url, files=files, headers=headers)
     json = {
-        "datasource": { "type": "uploaded_file", "file": { "uid": response.json().get('uid') } },
+        "datasource": { "type": "uploaded_file", "file": { "uid": response.json().get("uid") } },
         "title": OUTPUT_FILE_NAME,
         "type": "csvfile",
     }
