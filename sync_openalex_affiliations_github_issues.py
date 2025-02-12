@@ -37,6 +37,7 @@ def collect_issues():
     return all_issues
 
 def parse_issue(issue):
+    body = issue["body"]
     new_elt = {}
     new_elt["github_issue_id"] = issue["number"]
     new_elt["github_issue_link"] = f"https://github.com/{GIT_REPOSITORY_NAME}/issues/{issue['number']}"
@@ -48,19 +49,20 @@ def parse_issue(issue):
     c = "\nprevious_rors: "
     d = "\nworks_examples: "
     e = "\ncontact: "
-    a_start = issue["body"].find(a) + len(a)
-    a_end = issue["body"].find(b)
+    f = "\nversion: "
+    a_start = body.find(a) + len(a)
+    a_end = body.find(b)
     b_start = a_end + len(b)
-    b_end = issue["body"].find(c)
+    b_end = body.find(c)
     c_start = b_end + len(c)
-    c_end = issue["body"].find(d)
+    c_end = body.find(d)
     d_start = c_end + len(d)
-    d_end = issue["body"].find(e)
+    d_end = body.find(e)
     e_start = d_end + len(e)
-    e_end = len(issue["body"])-1
-    new_elt["raw_affiliation_name"] = issue["body"][a_start:a_end].replace("\r", "")
-    new_rors = [r.replace("\r", "") for r in issue["body"][b_start:b_end].split(";") if r]
-    previous_rors = [r.replace("\r", "") for r in issue["body"][c_start:c_end].split(";") if r]
+    e_end = body.find(f)
+    new_elt["raw_affiliation_name"] = body[a_start:a_end].replace("\r", "")
+    new_rors = [r.replace("\r", "") for r in body[b_start:b_end].split(";") if r]
+    previous_rors = [r.replace("\r", "") for r in body[c_start:c_end].split(";") if r]
     added_rors = list(set(new_rors) - set(previous_rors))
     removed_rors = list(set(previous_rors) - set(new_rors))
     new_elt["has_added_rors"] = 1 if len(added_rors) > 0 else 0
@@ -69,9 +71,9 @@ def parse_issue(issue):
     new_elt["previous_rors"] = ";".join(previous_rors)
     new_elt["added_rors"] = ";".join(added_rors)
     new_elt["removed_rors"] = ";".join(removed_rors)
-    new_elt["openalex_works_examples"] = ";".join([f"https://api.openalex.org/works/{work}" for work in issue["body"][d_start:d_end].replace("\r", "").split(";")])
+    new_elt["openalex_works_examples"] = ";".join([f"https://api.openalex.org/works/{work}" for work in body[d_start:d_end].replace("\r", "").split(";")])
     if e_start > d_start:
-        new_elt["contact"] = issue["body"][e_start:e_end].replace("\r", "")
+        new_elt["contact"] = body[e_start:e_end].replace("\r", "").lower()
         if "@" in new_elt["contact"]:
             new_elt["contact_domain"] = new_elt["contact"].split("@")[1].strip().replace("\r", "")
     return new_elt
