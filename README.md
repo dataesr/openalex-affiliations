@@ -1,7 +1,7 @@
 # openalex-affiliations
 
 An open dataset of all the issues of this repository is available here :
-https://data.enseignementsup-recherche.gouv.fr/explore/dataset/openalex-affiliations-corrections/information/. This dataset is updated every day at 2 AM.
+https://data.enseignementsup-recherche.gouv.fr/explore/dataset/openalex-affiliations-corrections/information/. This dataset is updated every day at 8 AM through a Github Action https://github.com/dataesr/openalex-affiliations/blob/main/.github/workflows/sync_openalex_affiliations_github_issues.yml.
 
 
 ***Exhibits cases where OpenAlex affiliation detection could be improved***
