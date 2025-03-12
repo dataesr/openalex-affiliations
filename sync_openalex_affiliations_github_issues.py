@@ -16,12 +16,14 @@ ODS_DATASET = "https://data.enseignementsup-recherche.gouv.fr/api/automation/v1.
 ODS_FILE_ID = "re_agmowf"
 OUTPUT_FILE_NAME = "github_issues.csv"
 
+
 try:
     GIT_TOKEN = os.environ["GIT_TOKEN"]
     GIT_USERNAME = os.environ["GIT_USERNAME"]
     ODS_API_KEY = os.environ["ODS_API_KEY"]
 except KeyError:
     print("Some config is not defined !")
+
 
 # Functions
 def collect_issues():
@@ -36,6 +38,7 @@ def collect_issues():
             break
     return all_issues
 
+
 def parse_issue(issue):
     body = issue["body"]
     new_elt = {}
@@ -48,8 +51,9 @@ def parse_issue(issue):
     b = "\nnew_rors: "
     c = "\nprevious_rors: "
     d = "\nworks_examples: "
-    e = "\ncontact: "
-    f = "\nversion: "
+    e = "\nsearched between: "
+    f = "\ncontact: "
+    g = "\nversion: "
     a_start = body.find(a) + len(a)
     a_end = body.find(b)
     b_start = a_end + len(b)
@@ -60,23 +64,31 @@ def parse_issue(issue):
     d_end = body.find(e)
     e_start = d_end + len(e)
     e_end = body.find(f)
+    f_start = e_end + len(f)
+    f_end = body.find(g)
+    g_start = f_end + len(g)
+    g_end = len(body)
     new_elt["raw_affiliation_name"] = body[a_start:a_end].replace("\r", "")
     new_rors = [r.replace("\r", "") for r in body[b_start:b_end].split(";") if r]
     previous_rors = [r.replace("\r", "") for r in body[c_start:c_end].split(";") if r]
     added_rors = list(set(new_rors) - set(previous_rors))
     removed_rors = list(set(previous_rors) - set(new_rors))
+    openalex_works_examples = [f"https://api.openalex.org/works/{work}" for work in body[d_start:d_end].replace("\r", "").split(";")]
+    searched_between = body[e_start:e_end]
     new_elt["has_added_rors"] = 1 if len(added_rors) > 0 else 0
     new_elt["has_removed_rors"] = 1 if len(removed_rors) > 0 else 0
     new_elt["new_rors"] = ";".join(new_rors)
     new_elt["previous_rors"] = ";".join(previous_rors)
     new_elt["added_rors"] = ";".join(added_rors)
     new_elt["removed_rors"] = ";".join(removed_rors)
-    new_elt["openalex_works_examples"] = ";".join([f"https://api.openalex.org/works/{work}" for work in body[d_start:d_end].replace("\r", "").split(";")])
-    if e_start > d_start:
-        new_elt["contact"] = body[e_start:e_end].replace("\r", "").lower()
-        if "@" in new_elt["contact"]:
-            new_elt["contact_domain"] = new_elt["contact"].split("@")[1].strip().replace("\r", "")
+    new_elt["openalex_works_examples"] = ";".join(openalex_works_examples)
+    new_elt["searched_between"] = searched_between
+    new_elt["contact"] = body[f_start:f_end].replace("\r", "").lower()
+    if "@" in new_elt["contact"]:
+        new_elt["contact_domain"] = new_elt["contact"].split("@")[1].strip().replace("\r", "")
+    new_elt["version"] = body[g_start:g_end]
     return new_elt
+
 
 def ods_sync():
     url = f"{ODS_DATASET}/resources/files/"
@@ -91,6 +103,7 @@ def ods_sync():
     requests.put(f"{ODS_DATASET}/resources/{ODS_FILE_ID}/", headers=headers, json=json)
     requests.post(f"{ODS_DATASET}/publish/", headers=headers)
 
+
 def main():
     data = []
     issues = collect_issues()
@@ -98,6 +111,7 @@ def main():
         data.append(parse_issue(issue))
     pd.DataFrame(data).to_csv(OUTPUT_FILE_NAME, index=False)
     ods_sync()
+
 
 # Main
 if __name__ == "__main__":
