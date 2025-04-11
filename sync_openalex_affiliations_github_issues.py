@@ -5,6 +5,7 @@
 from dotenv import load_dotenv
 import os
 import pandas as pd
+import re
 import requests
 
 load_dotenv()
@@ -28,18 +29,20 @@ except KeyError:
 # Functions
 def collect_issues() -> list[dict]:
     all_issues = []
-    for page in range(1, 50000):
-        issues_url = f"https://api.github.com/repos/{GIT_REPOSITORY_NAME}/issues?per_page={GIT_PER_PAGE}&page={page}&state=all"
-        gh_session = requests.Session()
-        gh_session.auth = (GIT_USERNAME, GIT_TOKEN)
-        issues = gh_session.get(issues_url).json()
+    pages_remaining = True
+    url = f"https://api.github.com/repos/{GIT_REPOSITORY_NAME}/issues?per_page={GIT_PER_PAGE}&state=all"
+    gh_session = requests.Session()
+    gh_session.auth = (GIT_USERNAME, GIT_TOKEN)
+    while pages_remaining:
+        response = gh_session.get(url)
+        link = response.headers.get("link")
+        pages_remaining = link and 'rel="next"' in link
+        issues = response.json()
         if isinstance(issues, list):
             all_issues += issues
-        else:
-            print(f"Error - {issues.get('status')} - {issues.get('message')}")
-            break
-        if len(issues) < GIT_PER_PAGE:
-            break
+        if pages_remaining:
+            matches = re.search(r"(?<=<)([\S]*)(?=>; rel=\"next\")", link)
+            url = matches.group(0)
     return all_issues
 
 
@@ -117,6 +120,7 @@ def main():
             data.append(parsed_issue)
     pd.DataFrame(data).to_csv(OUTPUT_FILE_NAME, index=False)
     ods_sync()
+    os.remove(OUTPUT_FILE_NAME)
 
 
 # Main
