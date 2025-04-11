@@ -26,20 +26,24 @@ except KeyError:
 
 
 # Functions
-def collect_issues():
+def collect_issues() -> list[dict]:
     all_issues = []
-    for p in range(1, 50000):
-        issues_url = f"https://api.github.com/repos/{GIT_REPOSITORY_NAME}/issues?per_page={GIT_PER_PAGE}&page={p}&state=all"
+    for page in range(1, 50000):
+        issues_url = f"https://api.github.com/repos/{GIT_REPOSITORY_NAME}/issues?per_page={GIT_PER_PAGE}&page={page}&state=all"
         gh_session = requests.Session()
         gh_session.auth = (GIT_USERNAME, GIT_TOKEN)
         issues = gh_session.get(issues_url).json()
-        all_issues += issues
+        if isinstance(issues, list):
+            all_issues += issues
+        else:
+            print(f"Error - {issues.get('status')} - {issues.get('message')}")
+            break
         if len(issues) < GIT_PER_PAGE:
             break
     return all_issues
 
 
-def parse_issue(issue):
+def parse_issue(issue:dict) -> dict:
     body = issue["body"]
     new_elt = {}
     new_elt["github_issue_id"] = issue["number"]
@@ -108,7 +112,9 @@ def main():
     data = []
     issues = collect_issues()
     for issue in issues:
-        data.append(parse_issue(issue))
+        parsed_issue = parse_issue(issue)
+        if "body" in parsed_issue:
+            data.append(parsed_issue)
     pd.DataFrame(data).to_csv(OUTPUT_FILE_NAME, index=False)
     ods_sync()
 
