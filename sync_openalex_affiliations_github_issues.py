@@ -116,8 +116,7 @@ def main():
     issues = collect_issues()
     for issue in issues:
         parsed_issue = parse_issue(issue)
-        if "body" in parsed_issue:
-            data.append(parsed_issue)
+        data.append(parsed_issue)
     pd.DataFrame(data).to_csv(OUTPUT_FILE_NAME, index=False)
     ods_sync()
     os.remove(OUTPUT_FILE_NAME)
