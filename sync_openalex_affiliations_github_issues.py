@@ -47,53 +47,39 @@ def collect_issues() -> list[dict]:
 
 
 def parse_issue(issue:dict) -> dict:
-    body = issue["body"]
     new_elt = {}
     new_elt["github_issue_id"] = issue["number"]
     new_elt["github_issue_link"] = f"https://github.com/{GIT_REPOSITORY_NAME}/issues/{issue['number']}"
     new_elt["state"] = issue["state"]
     new_elt["date_opened"] = issue["created_at"][0:10]
     new_elt["date_closed"] = None if issue["closed_at"] is None else issue["closed_at"][0:10]
-    a = "\nraw_affiliation_name: "
-    b = "\nnew_rors: "
-    c = "\nprevious_rors: "
-    d = "\nworks_examples: "
-    e = "\nsearched between: "
-    f = "\ncontact: "
-    g = "\nversion: "
-    a_start = body.find(a) + len(a)
-    a_end = body.find(b)
-    b_start = a_end + len(b)
-    b_end = body.find(c)
-    c_start = b_end + len(c)
-    c_end = body.find(d)
-    d_start = c_end + len(d)
-    d_end = body.find(e)
-    e_start = d_end + len(e)
-    e_end = body.find(f)
-    f_start = e_end + len(f)
-    f_end = body.find(g)
-    g_start = f_end + len(g)
-    g_end = len(body)
-    new_elt["raw_affiliation_name"] = body[a_start:a_end].replace("\r", "")
-    new_rors = [r.replace("\r", "") for r in body[b_start:b_end].split(";") if r]
-    previous_rors = [r.replace("\r", "") for r in body[c_start:c_end].split(";") if r]
-    added_rors = list(set(new_rors) - set(previous_rors))
-    removed_rors = list(set(previous_rors) - set(new_rors))
-    openalex_works_examples = [f"https://api.openalex.org/works/{work}" for work in body[d_start:d_end].replace("\r", "").split(";")]
-    searched_between = body[e_start:e_end]
-    new_elt["has_added_rors"] = 1 if len(added_rors) > 0 else 0
-    new_elt["has_removed_rors"] = 1 if len(removed_rors) > 0 else 0
-    new_elt["new_rors"] = ";".join(new_rors)
-    new_elt["previous_rors"] = ";".join(previous_rors)
+    matches = list(re.finditer(r"^(.*)$", issue["body"], re.MULTILINE))
+    for match in matches[1:]:
+        value = match.group()
+        if value.startswith("raw_affiliation_name: "):
+            new_elt["raw_affiliation_name"] = value.replace("raw_affiliation_name: ", "").replace("\r", "")
+        if value.startswith("new_rors: "):
+            new_elt["new_rors"] = value.replace("new_rors: ", "").replace("\r", "")
+        if value.startswith("previous_rors: "):
+            new_elt["previous_rors"] = value.replace("previous_rors: ", "").replace("\r", "")
+        if value.startswith("works_examples: "):
+            openalex_works_examples = [f"https://api.openalex.org/works/{work}" for work in value.replace("works_examples: ", "").replace("\r", "").split(";")]
+            new_elt["openalex_works_examples"] = ";".join(openalex_works_examples)
+        if value.startswith("searched between: "):
+            new_elt["searched_between"] = value.replace("searched between: ", "")
+        if value.startswith("contact: "):
+            contact = value.replace("contact: ", "").replace("\r", "").lower()
+            new_elt["contact"] = contact
+            if "@" in contact:
+                new_elt["contact_domain"] = contact.split("@")[1].strip()
+        if value.startswith("version: "):
+            new_elt["version"] = value.replace("version: ", "")
+    added_rors = [item for item in list(set(new_elt["new_rors"].split(";")) - set(new_elt["previous_rors"].split(";"))) if item]
     new_elt["added_rors"] = ";".join(added_rors)
+    new_elt["has_added_rors"] = 1 if len(added_rors) > 0 else 0
+    removed_rors = [item for item in list(set(new_elt["previous_rors"].split(";")) - set(new_elt["new_rors"].split(";"))) if item]
     new_elt["removed_rors"] = ";".join(removed_rors)
-    new_elt["openalex_works_examples"] = ";".join(openalex_works_examples)
-    new_elt["searched_between"] = searched_between
-    new_elt["contact"] = body[f_start:f_end].replace("\r", "").lower()
-    if "@" in new_elt["contact"]:
-        new_elt["contact_domain"] = new_elt["contact"].split("@")[1].strip().replace("\r", "")
-    new_elt["version"] = body[g_start:g_end]
+    new_elt["has_removed_rors"] = 1 if len(removed_rors) > 0 else 0
     return new_elt
 
 
