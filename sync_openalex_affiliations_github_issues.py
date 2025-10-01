@@ -57,7 +57,7 @@ def parse_issue(issue:dict) -> dict:
     for match in matches[1:]:
         value = match.group()
         if value.startswith("raw_affiliation_name: "):
-            new_elt["raw_affiliation_name"] = value.replace("raw_affiliation_name: ", "").replace("\r", "")
+            new_elt["raw_affiliation_name"] = value.replace("raw_affiliation_name: ", "").replace("\r", "").replace("\u2028", " ")
         if value.startswith("new_rors: "):
             new_elt["new_rors"] = value.replace("new_rors: ", "").replace("\r", "")
         if value.startswith("previous_rors: "):
