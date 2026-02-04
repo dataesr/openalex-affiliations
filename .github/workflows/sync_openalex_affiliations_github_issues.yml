@@ -1,3 +1,5 @@
+# This workflow was disabled manually.
+#  https://github.com/dataesr/openalex-affiliations/actions/workflows/sync_openalex_affiliations_github_issues.yml
 name: run sync_openalex_affiliations_github_issues.py
 
 on:
